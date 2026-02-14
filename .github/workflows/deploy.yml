@@ -1,0 +1,51 @@
+name: Build and Deploy spring service
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-south-2
+    
+    - name: Login to ECR
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build Docker Image
+      run: |
+        IMAGE_TAG=${{github.sha}}
+        docker build -t springservice:$IMAGE_TAG .
+        
+
+    - name: Tag Docker Image
+      run: |
+        IMAGE_TAG=${{github.sha}}
+        docker tag springservice:264426277863.dkr.ecr.ap-south-2.amazonaws.com/springservice:$IMAGE_TAG
+        docker tag springservice:264426277863.dkr.ecr.ap-south-2.amazonaws.com/springservice:latest
+    
+    - name: Push to ECR
+      run: |
+        IMAGE_TAG=${{github.sha}}
+        docker push 264426277863.dkr.ecr.ap-south-2.amazonaws.com/springservice:$IMAGE_TAG
+        docker push 264426277863.dkr.ecr.ap-south-2.amazonaws.com/springservice:latest
+
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@v1
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          docker pull 264426277863.dkr.ecr.ap-south-2.amazonaws.com/springservice:latest
+          docker compose up -d
