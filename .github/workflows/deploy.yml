@@ -48,4 +48,4 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           docker pull 264426277863.dkr.ecr.ap-south-2.amazonaws.com/springservice:latest
-          docker compose up -d
+          docker-compose up -d
