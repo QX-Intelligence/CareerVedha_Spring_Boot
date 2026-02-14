@@ -31,8 +31,8 @@ jobs:
     - name: Tag Docker Image
       run: |
         IMAGE_TAG=${{github.sha}}
-        docker tag springservice:264426277863.dkr.ecr.ap-south-2.amazonaws.com/springservice:$IMAGE_TAG
-        docker tag springservice:264426277863.dkr.ecr.ap-south-2.amazonaws.com/springservice:latest
+        docker tag springservice:$IMAGE_TAG 264426277863.dkr.ecr.ap-south-2.amazonaws.com/springservice:$IMAGE_TAG
+        docker tag springservice:$IMAGE_TAG 264426277863.dkr.ecr.ap-south-2.amazonaws.com/springservice:latest
     
     - name: Push to ECR
       run: |
