@@ -30,7 +30,7 @@ public class SecurityConfig {
         security.csrf(AbstractHttpConfigurer::disable).cors(cors->cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth->auth.requestMatchers("/api/internal/academics/hierarchy","/actuator/**","/api/get-exam-categories","/api/registersendotp","/api/questions-random-category","/api/questions-random-chapterid","/api/registeruser","/api/login","/api/login/send-otp","/api/refresh","/api/log-out","/api/contact", "/api/get-papers/bycategory","/api/get-questions","/api/submit-exam", "/api/current-affairs/by-region","/api/get-all-affairs", "/ws/**").permitAll().anyRequest().authenticated())
-        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .httpBasic(AbstractHttpConfigurer::disable).formLogin(AbstractHttpConfigurer::disable).logout(AbstractHttpConfigurer::disable)    .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return security.build();
     }
 @Bean
