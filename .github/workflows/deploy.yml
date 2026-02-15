@@ -51,6 +51,6 @@ jobs:
             | docker login --username AWS --password-stdin $ECR_REGISTRY
 
             cd /home/ec2-user/spring/
-
+            docker-compose down --remove-orphans
             docker pull $ECR_REGISTRY/$ECR_REPOSITORY:latest
-            docker-compose up -d
+            docker-compose up -d --force-recreate
