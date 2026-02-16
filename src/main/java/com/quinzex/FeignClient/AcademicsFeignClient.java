@@ -9,7 +9,7 @@ import java.util.List;
 
 @FeignClient(
         name = "academicsClient",
-        url = "http://localhost:8000", configuration = FeignAuthConfig.class
+        url = "http://localhost:8000"
 )
 public interface AcademicsFeignClient {
 
