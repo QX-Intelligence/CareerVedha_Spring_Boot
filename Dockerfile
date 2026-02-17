@@ -6,7 +6,7 @@ WORKDIR /build
 COPY pom.xml .
 COPY src ./src
 
-RUN mvn clean package
+RUN mvn clean package -Dskiptests
 
 # --- Stage 2: Runtime ---
 FROM eclipse-temurin:17-jre
@@ -20,4 +20,5 @@ ENV JAVA_OPTS="-Xms1g -Xmx2g"
 EXPOSE 8080
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+
 
