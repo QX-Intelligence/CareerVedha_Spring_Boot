@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 @RestController
-@RequestMapping(value = "/api", produces = "application/json")
+@RequestMapping(value = "/api/spring", produces = "application/json")
 public class Controller {
     private final ContactService contactService;
     private final IemailService iemailService;
