@@ -9,10 +9,10 @@ import java.util.List;
 
 @FeignClient(
         name = "academicsClient",
-        url = "http://localhost:8000"
+        url = "http://backend.quinzexintelligence.com"
 )
 public interface AcademicsFeignClient {
 
-    @GetMapping("/api/academics/hierarchy/")
+    @GetMapping("/api/django/academics/hierarchy/")
     List<ClassHierarchyDTO> getHierarchy();
 }
