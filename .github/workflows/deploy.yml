@@ -9,12 +9,6 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    env:
-      IMAGE_TAG: ${{ github.sha }}
-      ECR_REGISTRY: 264426277863.dkr.ecr.ap-south-2.amazonaws.com
-      ECR_REPOSITORY: springservice
-      AWS_REGION: ap-south-2
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -24,7 +18,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ap-south-2
 
       - name: Login to ECR
         uses: aws-actions/amazon-ecr-login@v1
@@ -32,17 +26,16 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and Push ARM Image (NO CACHE)
+      - name: Build and Push Image (NO CACHE)
         run: |
           docker buildx build \
             --no-cache \
             --pull \
             --platform linux/arm64 \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
+            -t 264426277863.dkr.ecr.ap-south-2.amazonaws.com/springservice:latest \
             --push .
 
-      - name: Deploy to EC2 (Clean & Recreate)
+      - name: Deploy to EC2 (Hardcoded Image)
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -51,24 +44,25 @@ jobs:
           script: |
             set -e
 
+            # Login to ECR
             aws ecr get-login-password --region ap-south-2 \
-            | docker login --username AWS --password-stdin $ECR_REGISTRY
+            | docker login --username AWS --password-stdin 264426277863.dkr.ecr.ap-south-2.amazonaws.com
 
             cd /home/ec2-user/spring/
 
-            # Stop and remove old container
+            # Stop container
             docker-compose down --remove-orphans || true
             docker rm -f spring-api || true
 
-            # Remove old image to prevent stale reuse
-            docker rmi $ECR_REGISTRY/$ECR_REPOSITORY:latest || true
+            # Remove old image completely
+            docker rmi 264426277863.dkr.ecr.ap-south-2.amazonaws.com/springservice:latest || true
 
-            # Pull fresh image
-            docker pull $ECR_REGISTRY/$ECR_REPOSITORY:latest
+            # Pull fresh image explicitly
+            docker pull 264426277863.dkr.ecr.ap-south-2.amazonaws.com/springservice:latest
 
-            # Start fresh container
+            # Recreate container
             docker-compose up -d --force-recreate
 
-            # Show running container image ID
+            # Show running image
             docker ps
             docker images | grep springservice
