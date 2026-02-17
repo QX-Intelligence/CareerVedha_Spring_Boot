@@ -2,6 +2,7 @@ package com.quinzex.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -18,6 +19,8 @@ public class EmailService implements IemailService {
     private final IotpService iotpService;
     private final SpringTemplateEngine templateEngine;
     private final JavaMailSender javaMailSender;
+    @Value("${spring.mail.username}")
+    private String fromEmail;
 
     public EmailService(IotpService iotpService,JavaMailSender javaMailSender,SpringTemplateEngine templateEngine){
         this.iotpService=iotpService;
@@ -35,6 +38,7 @@ public class EmailService implements IemailService {
         try{
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(message,true,"UTF-8");
+            messageHelper.setFrom(fromEmail);
             messageHelper.setTo(email);
             messageHelper.setSubject("Verify your Career Vedha Registration");
             messageHelper.setText(
@@ -56,6 +60,7 @@ public class EmailService implements IemailService {
         try{
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(message,true,"UTF-8");
+            messageHelper.setFrom(fromEmail);
             messageHelper.setTo(email);
             messageHelper.setSubject("Verify your Career Vedha login");
             messageHelper.setText(
@@ -75,6 +80,7 @@ public class EmailService implements IemailService {
       try{
        MimeMessage message = javaMailSender.createMimeMessage();
        MimeMessageHelper helper = new MimeMessageHelper(message,true,"UTF-8");
+       helper.setFrom(fromEmail);
        helper.setTo(email);
        helper.setSubject("Suspicious Login Alert – Career Vedha");
        Context context = new Context();
@@ -94,6 +100,7 @@ public class EmailService implements IemailService {
       try {
           MimeMessage message = javaMailSender.createMimeMessage();
           MimeMessageHelper helper = new MimeMessageHelper(message,true,"UTF-8");
+          helper.setFrom(fromEmail);
           helper.setTo(email);
           helper.setSubject("Role Approved – Career Vedha");
           Context context = new Context();
@@ -111,6 +118,7 @@ public class EmailService implements IemailService {
        try{
            MimeMessage message = javaMailSender.createMimeMessage();
            MimeMessageHelper helper = new MimeMessageHelper(message,true,"UTF-8");
+           helper.setFrom(fromEmail);
            helper.setTo(email);
            helper.setSubject("Role Request Rejected – Career Vedha");
            Context context = new Context();
@@ -133,6 +141,7 @@ public class EmailService implements IemailService {
    try {
        MimeMessage message = javaMailSender.createMimeMessage();
        MimeMessageHelper helper = new MimeMessageHelper(message,true,"UTF-8");
+       helper.setFrom(fromEmail);
        helper.setTo(to);
        helper.setSubject(subject);
        helper.setText(htmlContent,true);
