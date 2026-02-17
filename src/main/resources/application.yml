@@ -46,10 +46,7 @@ spring:
 
   data:
     redis:
-      host: ${SPRING_DATA_REDIS_HOST}
-      port: ${SPRING_DATA_REDIS_PORT}
-      ssl:
-        enabled: true
+      url: ${SPRING_DATA_REDIS_HOST}
 
   mail:
     host: ${SPRING_MAIL_HOST}
