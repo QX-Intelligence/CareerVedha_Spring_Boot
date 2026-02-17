@@ -46,13 +46,8 @@ spring:
 
   data:
     redis:
-<<<<<<< HEAD
-      url: ${SPRING_DATA_REDIS_HOST}
-=======
-      url: ${SPRING_DATA_REDIS_URL}
-      timeout: 60000
->>>>>>> 1157094 (redis fix with url addition)
-
+        url: ${SPRING_DATA_REDIS_URL}
+        timeout: 60000
   mail:
     host: ${SPRING_MAIL_HOST}
     port: ${SPRING_MAIL_PORT}
