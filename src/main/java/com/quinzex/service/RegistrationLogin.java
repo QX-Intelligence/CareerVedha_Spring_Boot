@@ -176,9 +176,9 @@ public class RegistrationLogin implements IRegistrationLogin {
 
         ResponseCookie cookie = ResponseCookie.from("refreshToken",refreshToken)
                 .httpOnly(true)
-                .secure(false)
-                .sameSite("Lax")
-                .path("/api/refresh")
+                .secure(true)
+                .sameSite("None")
+                .path("/api/spring/refresh")
                 .maxAge(Duration.ofDays(7))
                 .build();
 
