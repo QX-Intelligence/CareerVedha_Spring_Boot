@@ -213,9 +213,9 @@ public class RegistrationLogin implements IRegistrationLogin {
 
         ResponseCookie  cookie = ResponseCookie.from("refreshToken", newRefreshToken)
                 .httpOnly(true)
-                .secure(false)
-                .sameSite("Lax")
-                .path("/api/refresh")
+                .secure(true)
+                .sameSite("None")
+                .path("/api/spring/refresh")
                 .maxAge(Duration.ofDays(7))
                 .build();
         response.addHeader("Set-Cookie",cookie.toString());
@@ -231,10 +231,10 @@ public class RegistrationLogin implements IRegistrationLogin {
 
            ResponseCookie cookie = ResponseCookie.from("refreshToken","")
                    .httpOnly(true)
-                   .secure(false)
-                   .path("/api/refresh")
+                   .secure(true)
+                   .path("/api/spring/refresh")
                    .maxAge(0)
-                   .sameSite("Lax")
+                   .sameSite("None")
                    .build();
            response.addHeader("Set-Cookie",cookie.toString());
 
