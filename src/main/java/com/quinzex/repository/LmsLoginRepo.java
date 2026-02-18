@@ -24,11 +24,12 @@ public interface LmsLoginRepo extends JpaRepository<LmsLogin,String> {
     Page<LmsLogin> searchUsers(@Param("keyword") String keyword, Pageable pageable);
 
     @Query("""
-    SELECT l FROM LmsLogin l
-    JOIN FETCH l.role r
-    JOIN FETCH r.permissions
-    WHERE l.email = :email
+    SELECT DISTINCT l FROM LmsLogin l
+    LEFT JOIN FETCH l.role r
+    LEFT JOIN FETCH r.permissions
+    WHERE LOWER(l.email) = LOWER(:email)
 """)
     Optional<LmsLogin> findByEmailWithRoleAndPermissions(String email);
+
 
 }
