@@ -30,11 +30,11 @@ public class EmailService implements IemailService {
 
     @Async
     @Override
-    public void sendEmail(String email) {
+    public void sendEmail(String email,String otp) {
 
-       String otpObtained =    iotpService.generateOtp(email);
+
         Context context = new Context();
-        context.setVariable("otp", otpObtained);
+        context.setVariable("otp", otp);
         try{
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(message,true,"UTF-8");

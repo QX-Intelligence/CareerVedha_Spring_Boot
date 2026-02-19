@@ -48,6 +48,7 @@ public class Controller {
     private final IDjangoCategories     djangoCategories;
     private final CurrentAffairsService currentAffairsService;
     private final QuestionPaperService questionPaperService;
+    private final IotpService   iotpService;
 
     public Controller(
             IemailService iemailService,
@@ -64,7 +65,8 @@ public class Controller {
             IDjangoCategories djangoCategories,
             CurrentAffairsService currentAffairsService,
             QuestionPaperService questionPaperService,
-            ContactService contactService) {
+            ContactService contactService,
+            IotpService iotpService) {
 
         this.iemailService = iemailService;
         this.iRegistrationLogin = iRegistrationLogin;
@@ -82,13 +84,15 @@ public class Controller {
         this.currentAffairsService = currentAffairsService;
         this.questionPaperService = questionPaperService;
         this.contactService = contactService;
+        this.iotpService = iotpService;
     }
 
 
 
     @PostMapping("/registersendotp")
     public ResponseEntity<Map<String, Object>> sendOtp(@RequestParam String email) {
-        iemailService.sendEmail(email);
+       String otp =iotpService.generateOtp(email);
+       iemailService.sendEmail(email,otp);
         return ResponseEntity.ok(
                 Map.of("message", "OTP sent to mail", "email", email)
         );

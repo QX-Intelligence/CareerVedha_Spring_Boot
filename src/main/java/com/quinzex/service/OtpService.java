@@ -27,8 +27,12 @@ public class OtpService implements IotpService {
        String otp = generateOtp();
 
 
-        redisTemplate.opsForValue()
-                .set(buildKey(email), otp, optExpiration);
+        try{
+            redisTemplate.opsForValue()
+                    .set(buildKey(email), otp, optExpiration);
+        }catch (Exception e){
+            throw new RuntimeException("OTP service temporarily unavailable. Please try again.");
+        }
         return otp;
 
     }
@@ -42,16 +46,21 @@ public class OtpService implements IotpService {
         }
     @Override
     public boolean validateOtp(String email , String enteredOtp) {
+try{
 
-       Object StoredOtp =  redisTemplate.opsForValue().get(buildKey(email));
-       if(StoredOtp==null){
-           return false;
-       }
-       boolean isValid = StoredOtp.toString().equals(enteredOtp);
-       if(isValid){
-           redisTemplate.delete(buildKey(email));
-       }
-       return isValid;
+    Object StoredOtp =  redisTemplate.opsForValue().get(buildKey(email));
+    if(StoredOtp==null){
+        return false;
+    }
+    boolean isValid = StoredOtp.toString().equals(enteredOtp);
+    if(isValid){
+        redisTemplate.delete(buildKey(email));
+    }
+    return isValid;
+}catch (Exception e){
+    throw new RuntimeException("OTP service temporarily unavailable. Please try again.");
+}
+
 
     }
 

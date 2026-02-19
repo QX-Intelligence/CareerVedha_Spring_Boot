@@ -4,7 +4,7 @@ import java.util.concurrent.CompletableFuture;
 
 public interface IemailService {
 
-    public void sendEmail(String email );
+    public void sendEmail(String email, String otp);
     public void sendLoginEmail(String email);
     public void sendSuspeciousEmail(String email);
     public void sendApprovalEmail(String email, String role);
