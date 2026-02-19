@@ -9,7 +9,7 @@ import java.util.List;
 
 @FeignClient(
         name = "academicsClient",
-        url = "https://backend.quinzexintelligence.com"
+        url = "http://127.0.0.1:8000"
 )
 public interface AcademicsFeignClient {
 
