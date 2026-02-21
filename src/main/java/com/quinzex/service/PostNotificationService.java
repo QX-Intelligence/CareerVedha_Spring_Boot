@@ -28,17 +28,22 @@ public class PostNotificationService implements IPostNotificationService {
     @Transactional
     public void postNotification(PostNotificationDto postNotificationDto) {
         PostNotification notification = new PostNotification();
+        String receiverRole = postNotificationDto.getReceiverRole();
         notification.setPostId(postNotificationDto.getPostId());
         notification.setMessage(postNotificationDto.getMessage());
-        notification.setReceiverRole(postNotificationDto.getReceiverRole());
+        notification.setReceiverRole(receiverRole);
         postNotificationRepo.save(notification);
         //role based notification
-        simpMessagingTemplate.convertAndSend("/topic/notifications/"+postNotificationDto.getReceiverRole(),notification );
-        //admin notification
-        simpMessagingTemplate.convertAndSend(
-                "/topic/notifications/ADMIN",
-                notification
-        );
+        simpMessagingTemplate.convertAndSend("/topic/notifications/"+receiverRole,notification );
+
+        //super admin targeted notifications should not be pushed to admin topic
+        if (!"SUPER_ADMIN".equals(receiverRole)) {
+            //admin notification
+            simpMessagingTemplate.convertAndSend(
+                    "/topic/notifications/ADMIN",
+                    notification
+            );
+        }
         //super admin notification
         simpMessagingTemplate.convertAndSend(
                 "/topic/notifications/SUPER_ADMIN",
