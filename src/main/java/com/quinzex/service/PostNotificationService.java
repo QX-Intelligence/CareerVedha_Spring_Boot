@@ -5,7 +5,6 @@ import com.quinzex.entity.PostNotification;
 import com.quinzex.repository.PostNotificationRepo;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -73,8 +72,16 @@ public class PostNotificationService implements IPostNotificationService {
         );
     }
     Pageable pageable = PageRequest.of(0, size);
-        if ("ADMIN".equals(loggedInUserRole) || "SUPER_ADMIN".equals(loggedInUserRole)) {
+        if ("SUPER_ADMIN".equals(loggedInUserRole)) {
             return postNotificationRepo.findAllByCursor(
+                    createdAt,
+                    cursorId,
+                    pageable
+            );
+        }
+
+        if ("ADMIN".equals(loggedInUserRole)) {
+            return postNotificationRepo.findAllExcludingSuperAdminByCursor(
                     createdAt,
                     cursorId,
                     pageable

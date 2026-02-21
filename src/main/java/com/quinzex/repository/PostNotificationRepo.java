@@ -30,6 +30,21 @@ public interface PostNotificationRepo extends JpaRepository<PostNotification,Lon
 
     @Query("""
     SELECT p FROM PostNotification p
+    WHERE p.receiverRole <> 'SUPER_ADMIN'
+      AND (
+           p.createdAt < :createdAt
+        OR (p.createdAt = :createdAt AND p.notificationId < :id)
+      )
+    ORDER BY p.createdAt DESC, p.notificationId DESC
+""")
+    List<PostNotification> findAllExcludingSuperAdminByCursor(
+            @Param("createdAt") LocalDateTime createdAt,
+            @Param("id") Long id,
+            Pageable pageable
+    );
+
+    @Query("""
+    SELECT p FROM PostNotification p
     WHERE p.receiverRole = :role
       AND (
            p.createdAt < :createdAt
