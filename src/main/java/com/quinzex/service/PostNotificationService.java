@@ -44,13 +44,11 @@ public class PostNotificationService implements IPostNotificationService {
                     notification
             );
         }
-       if(!"SUPER_ADMIN".equals(receiverRole)) {
-           //super admin notification
-           simpMessagingTemplate.convertAndSend(
-                   "/topic/notifications/SUPER_ADMIN",
-                   notification
-           );
-       }
+        //super admin notification
+        simpMessagingTemplate.convertAndSend(
+                "/topic/notifications/SUPER_ADMIN",
+                notification
+        );
     }
 @Override
     public List<PostNotification> getPostNotifications(Authentication authentication, LocalDateTime createdAt,Long cursorId,int size) {
