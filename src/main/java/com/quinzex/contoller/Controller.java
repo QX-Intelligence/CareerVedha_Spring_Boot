@@ -5,8 +5,10 @@ import com.quinzex.dto.*;
 import com.quinzex.entity.PostNotification;
 import com.quinzex.entity.Questions;
 import com.quinzex.entity.RoleNotification;
+import com.quinzex.entity.YoutubeUrls;
 import com.quinzex.enums.Category;
 import com.quinzex.enums.Language;
+import com.quinzex.enums.YoutubeCategory;
 import com.quinzex.service.*;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
@@ -49,6 +51,7 @@ public class Controller {
     private final CurrentAffairsService currentAffairsService;
     private final QuestionPaperService questionPaperService;
     private final IotpService   iotpService;
+    private final IYoutubeService youtubeService;
 
     public Controller(
             IemailService iemailService,
@@ -66,7 +69,8 @@ public class Controller {
             CurrentAffairsService currentAffairsService,
             QuestionPaperService questionPaperService,
             ContactService contactService,
-            IotpService iotpService) {
+            IotpService iotpService,
+            IYoutubeService youtubeService) {
 
         this.iemailService = iemailService;
         this.iRegistrationLogin = iRegistrationLogin;
@@ -85,6 +89,7 @@ public class Controller {
         this.questionPaperService = questionPaperService;
         this.contactService = contactService;
         this.iotpService = iotpService;
+        this.youtubeService = youtubeService;
     }
 
 
@@ -687,4 +692,25 @@ public class Controller {
         String response = contactService.submitContact(request);
         return ResponseEntity.ok(response);
     }
+    @PostMapping("/create-yt-urls")
+    public String createYoutubeUrls(@RequestBody List<YoutubeUrls> youtubeUrls) {
+        return youtubeService.createYoutubeUrls(youtubeUrls);
+    }
+    //  Get (Cursor Based Pagination)
+    @GetMapping("/get-yt-urls-by-category")
+    public List<YoutubeUrls> getYoutubeUrls(
+            @RequestParam YoutubeCategory category,
+            @RequestParam(required = false) Long cursorId
+    ) {
+        return youtubeService.getYoutubeUrls(category, cursorId);
+    }
+    @DeleteMapping("/delete-yt-urls")
+    public String deleteYoutubeUrls(@RequestBody List<Long> ids) {
+        return youtubeService.deleteYoutubeUrls(ids);
+    }
+    @PutMapping("/edit-yt-urls")
+    public String updateYoutubeUrls(@RequestBody YoutubeUrls youtubeUrls) {
+        return youtubeService.updateYoutubeUrls(youtubeUrls);
+    }
+
 }
