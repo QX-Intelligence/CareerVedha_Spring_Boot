@@ -5,7 +5,8 @@ spring:
     redis:
       host: cvedha-prod-ecache-voss-01-orfbb1.serverless.aps2.cache.amazonaws.com
       port: 6379
-      ssl: true
+      ssl:
+        enabled: true
       timeout: 60000
 
   datasource:
