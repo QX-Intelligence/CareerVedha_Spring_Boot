@@ -4,8 +4,12 @@ import com.quinzex.dto.*;
 import com.quinzex.entity.Questions;
 import com.quinzex.repository.QuestionsRepo;
 import jakarta.transaction.Transactional;
-import org.springframework.cache.annotation.CacheEvict;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.interceptor.SimpleKey;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -20,15 +24,17 @@ import java.util.stream.Collectors;
 public class ExamService implements IExamService {
 
     private final QuestionsRepo questionsRepo;
+    private final CacheManager cacheManager;
+    private static final Logger log = LoggerFactory.getLogger(ExamService.class);
 
-    public ExamService(QuestionsRepo questionsRepo) {
+    public ExamService(QuestionsRepo questionsRepo, CacheManager cacheManager) {
         this.questionsRepo = questionsRepo;
+        this.cacheManager = cacheManager;
     }
 
 
     @Override
     @Transactional
-    @CacheEvict(value = "categories",key = "all")
     public String createQuestion(List<CreateQuestion> createQuestions) {
 
         List<Questions> questionsList = createQuestions.stream().map(question->{
@@ -45,8 +51,23 @@ public class ExamService implements IExamService {
         }).toList();
 
         questionsRepo.saveAll(questionsList);
+        evictCategoriesCacheSafely();
         return questionsList.size()+" questions added successfully";
 
+    }
+
+    private void evictCategoriesCacheSafely() {
+        Cache cache = cacheManager.getCache("categories");
+        if (cache == null) {
+            return;
+        }
+        try {
+            cache.evict("all");
+            // Backward compatibility with entries cached before explicit key was set.
+            cache.evict(SimpleKey.EMPTY);
+        } catch (RuntimeException ex) {
+            log.warn("Categories cache eviction failed; continuing request flow.", ex);
+        }
     }
 
     @Override
@@ -115,7 +136,7 @@ public class ExamService implements IExamService {
     }
 
     @Override
-   @Cacheable("categories")
+   @Cacheable(value = "categories", key = "'all'")
     public List<String> getAllExamCategories(){
 
         return questionsRepo.findDistinctCategories();
