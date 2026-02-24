@@ -70,6 +70,7 @@ public class GlobalExceptionHandler {
             RuntimeException ex,
             HttpServletRequest request
     ) {
+        ex.printStackTrace();
         return buildError(
                 HttpStatus.BAD_REQUEST,
                 ex.getMessage(),
