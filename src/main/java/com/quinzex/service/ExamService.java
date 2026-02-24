@@ -28,7 +28,7 @@ public class ExamService implements IExamService {
 
     @Override
     @Transactional
-    @CacheEvict(value = "categories", allEntries = true)
+    @CacheEvict(value = "categories", allEntries = true,beforeInvocation = true)
     public String createQuestion(List<CreateQuestion> createQuestions) {
 
         List<Questions> questionsList = createQuestions.stream().map(question->{
