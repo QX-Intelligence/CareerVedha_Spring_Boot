@@ -28,7 +28,8 @@ public class RedisConfig {
         redisConfig.setPort(6379);
 
         LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
-                .useSsl()                        // enables SSL/TLS
+                .useSsl()
+                .disablePeerVerification()// enables SSL/TLS
                 .and()
                 .commandTimeout(Duration.ofSeconds(60))
                 .build();
