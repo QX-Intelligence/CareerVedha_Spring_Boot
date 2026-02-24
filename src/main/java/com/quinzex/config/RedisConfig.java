@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -18,6 +20,21 @@ import java.time.Duration;
 @EnableCaching
 public class RedisConfig {
 
+
+    @Bean
+    public LettuceConnectionFactory redisConnectionFactory() {
+        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
+        redisConfig.setHostName("cvedha-prod-ecache-voss-01-orfbb1.serverless.aps2.cache.amazonaws.com");
+        redisConfig.setPort(6379);
+
+        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
+                .useSsl()                        // enables SSL/TLS
+                .and()
+                .commandTimeout(Duration.ofSeconds(60))
+                .build();
+
+        return new LettuceConnectionFactory(redisConfig, clientConfig);
+    }
 
      @Bean
     public RedisTemplate<String,Object> redisTemplate (RedisConnectionFactory connectionFactory){
