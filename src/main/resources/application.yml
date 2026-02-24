@@ -1,6 +1,12 @@
 spring:
   application:
     name: ${SPRING_APPLICATION_NAME}
+  data:
+    redis:
+      host: cvedha-prod-ecache-voss-01-orfbb1.serverless.aps2.cache.amazonaws.com
+      port: 6379
+      ssl: true
+      timeout: 60000
 
   datasource:
     url: ${SPRING_DATASOURCE_URL}
@@ -44,12 +50,7 @@ spring:
       missing-topics-fatal: ${SPRING_KAFKA_LISTENER_MISSING_TOPICS_FATAL}
       concurrency: 1
 
-data:
-  redis:
-    host: cvedha-prod-ecache-voss-01-orfbb1.serverless.aps2.cache.amazonaws.com
-    port: 6379
-    ssl: true
-    timeout: 60000
+
   mail:
     host: ${SPRING_MAIL_HOST}
     port: ${SPRING_MAIL_PORT}
