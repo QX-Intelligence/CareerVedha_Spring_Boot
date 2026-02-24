@@ -28,7 +28,7 @@ public class ExamService implements IExamService {
 
     @Override
     @Transactional
-   // @CacheEvict(value = "categories", allEntries = true)
+    @CacheEvict(value = "categories", allEntries = true)
     public String createQuestion(List<CreateQuestion> createQuestions) {
 
         List<Questions> questionsList = createQuestions.stream().map(question->{
@@ -115,7 +115,7 @@ public class ExamService implements IExamService {
     }
 
     @Override
-   // @Cacheable("categories")
+   @Cacheable("categories")
     public List<String> getAllExamCategories(){
 
         return questionsRepo.findDistinctCategories();
