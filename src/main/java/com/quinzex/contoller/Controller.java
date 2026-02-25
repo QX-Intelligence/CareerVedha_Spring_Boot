@@ -535,11 +535,11 @@ public class Controller {
     }
 
     @GetMapping("/questions-random-chapterid")
-    public ResponseEntity<List<QuestionsResponse>> getRandomQuestions(
+    public ResponseEntity<List<?>> getRandomQuestions(
             @RequestParam Long chapterId,
             @RequestParam(defaultValue = "10") int count
     ) {
-        List<QuestionsResponse> questions =
+        List<?> questions =
                 examService.getRandomQuestionsByChapterID(chapterId, count);
 
         if (questions.isEmpty()) {
@@ -549,11 +549,11 @@ public class Controller {
         return ResponseEntity.ok(questions); // 200
     }
     @GetMapping("/questions-random-category")
-    public ResponseEntity<List<QuestionsResponse>> getRandomQuestions(
+    public ResponseEntity<List<?>> getRandomQuestions(
             @RequestParam String category,
             @RequestParam(defaultValue = "10") int count
     ) {
-        List<QuestionsResponse> questions =
+        List<?> questions =
                 examService.getRandomQuestionsByCategory(category, count);
 
         if (questions.isEmpty()) {

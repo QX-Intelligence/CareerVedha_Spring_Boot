@@ -15,7 +15,7 @@ public interface IExamService {
     public ScoreWithAnswers getScore(List<AnswerRequest> answers);
     public String editQuestion(Long id,CreateQuestion createQuestion);
     public String deleteQuestion(Long id);
-    public List<QuestionsResponse> getRandomQuestionsByCategory(String category, int limit);
-    public List<QuestionsResponse> getRandomQuestionsByChapterID(Long chapterId, int limit);
+    public List<?> getRandomQuestionsByCategory(String category, int limit);
+    public List<?> getRandomQuestionsByChapterID(Long chapterId, int limit);
     public List<String> getAllExamCategories();
 }

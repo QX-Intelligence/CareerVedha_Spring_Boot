@@ -15,6 +15,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
@@ -123,16 +125,38 @@ public class ExamService implements IExamService {
         return "Question Deleted Successfully";
     }
     @Override
-    public List<QuestionsResponse> getRandomQuestionsByCategory(String category,int limit) {
-        return questionsRepo.findRandomByCategory(category,limit).stream().map(this::mapToQuestionResponse).toList();
+    public List<?> getRandomQuestionsByCategory(String category,int limit) {
+        boolean includeAnswers = hasGetAnswersAuthority();
+        if(!includeAnswers) {
+            return questionsRepo.findRandomByCategory(category,limit).stream().map(this::mapToQuestionResponse).toList();
+        }else{
+            return questionsRepo.findRandomByCategory(category,limit).stream().map(this::mapToQuestionsWithAnswerResponse).toList();
+        }
+
     }
     @Override
-    public List<QuestionsResponse> getRandomQuestionsByChapterID(Long chapterId, int limit) {
-        return questionsRepo.findRandomByChapterId(chapterId,limit).stream().map(this::mapToQuestionResponse).toList();
+    public List<?> getRandomQuestionsByChapterID(Long chapterId, int limit) {
+      boolean includeAnswers = hasGetAnswersAuthority();
+      if(!includeAnswers) {
+          return questionsRepo.findRandomByChapterId(chapterId,limit).stream().map(this::mapToQuestionResponse).toList();
+      }else{
+          return questionsRepo.findRandomByChapterId(chapterId,limit).stream().map(this::mapToQuestionsWithAnswerResponse).toList();
+      }
     }
 
     private QuestionsResponse mapToQuestionResponse(Questions questions) {
         return new QuestionsResponse(questions.getId(),questions.getQuestion(),questions.getOpt1(),questions.getOpt2(),questions.getOpt3(),questions.getOpt4());
+    }
+    private QuestionsWithAnswerResponse mapToQuestionsWithAnswerResponse(Questions questionsResponse) {
+        return new QuestionsWithAnswerResponse(questionsResponse.getId(),
+                questionsResponse.getQuestion(),
+                questionsResponse.getOpt1(),
+                questionsResponse.getOpt2(),
+                questionsResponse.getOpt3(),
+                questionsResponse.getOpt4(),
+                questionsResponse.getCorrectOption()
+        );
+
     }
 
     @Override
@@ -140,5 +164,10 @@ public class ExamService implements IExamService {
     public List<String> getAllExamCategories(){
 
         return questionsRepo.findDistinctCategories();
+    }
+
+    private boolean hasGetAnswersAuthority(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return  authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("GET_ANSWERS"));
     }
 }
