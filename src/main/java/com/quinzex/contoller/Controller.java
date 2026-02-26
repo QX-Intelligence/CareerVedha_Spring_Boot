@@ -383,7 +383,7 @@ public class Controller {
     public ResponseEntity<String> deleteQuestion(
             @PathVariable Long id
     ) {
-        String response = examService.deleteQuestion(id);
+        String response = examService.deleteQuestion(List.of(id));
         return ResponseEntity.ok(response);
     }
     @GetMapping("/notifications-status")
