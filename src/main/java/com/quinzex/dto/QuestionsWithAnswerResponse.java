@@ -15,4 +15,6 @@ public class QuestionsWithAnswerResponse {
     private String opt3;
     private String opt4;
     private String correctOption;
+    private String category;
+    private Long chapterId;
 }

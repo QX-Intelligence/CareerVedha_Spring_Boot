@@ -110,6 +110,8 @@ public class ExamService implements IExamService {
         questions.setOpt3(createQuestion.getOption3());
         questions.setOpt4(createQuestion.getOption4());
         questions.setCorrectOption(createQuestion.getCorrectAnswer().toUpperCase());
+        questions.setCategory(createQuestion.getCategory());
+        questions.setChapterId(createQuestion.getChapterId());
         questionsRepo.save(questions);
         return "Question Edited Successfully";
 
@@ -117,12 +119,16 @@ public class ExamService implements IExamService {
 
     @Transactional
     @Override
-    public String deleteQuestion(Long id) {
-        Questions questions = questionsRepo.findById(id).orElseThrow(() -> new RuntimeException("Question Not Found"));
-
-        questionsRepo.delete(questions);
-
-        return "Question Deleted Successfully";
+    public String deleteQuestion(List<Long> ids) {
+      if(ids == null || ids.isEmpty()) {
+          throw new RuntimeException("No Questions ids provided");
+      }
+      List<Questions> existingQuestions = questionsRepo.findAllById(ids);
+      if(existingQuestions.isEmpty()) {
+          throw new RuntimeException("Questions not found");
+      }
+      questionsRepo.deleteAll(existingQuestions);
+      return  existingQuestions.size()+ " Questions Deleted Successfully";
     }
     @Override
     public List<?> getRandomQuestionsByCategory(String category,int limit) {
@@ -145,7 +151,7 @@ public class ExamService implements IExamService {
     }
 
     private QuestionsResponse mapToQuestionResponse(Questions questions) {
-        return new QuestionsResponse(questions.getId(),questions.getQuestion(),questions.getOpt1(),questions.getOpt2(),questions.getOpt3(),questions.getOpt4());
+        return new QuestionsResponse(questions.getId(),questions.getQuestion(),questions.getOpt1(),questions.getOpt2(),questions.getOpt3(),questions.getOpt4(),questions.getCategory(),questions.getChapterId());
     }
     private QuestionsWithAnswerResponse mapToQuestionsWithAnswerResponse(Questions questionsResponse) {
         return new QuestionsWithAnswerResponse(questionsResponse.getId(),
@@ -154,7 +160,10 @@ public class ExamService implements IExamService {
                 questionsResponse.getOpt2(),
                 questionsResponse.getOpt3(),
                 questionsResponse.getOpt4(),
-                questionsResponse.getCorrectOption()
+                questionsResponse.getCorrectOption(),
+                questionsResponse.getCategory(),
+                questionsResponse.getChapterId()
+
         );
 
     }
